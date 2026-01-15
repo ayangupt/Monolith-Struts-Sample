@@ -70,21 +70,21 @@ public abstract class DaoTestBase {
         if (statement != null) {
           statement.close();
         }
-      } catch (Exception e) {
+      } catch (java.sql.SQLException e) {
         // ignore cleanup errors in tests
       }
       try {
         if (reader != null) {
           reader.close();
         }
-      } catch (Exception e) {
+      } catch (java.io.IOException e) {
         // ignore cleanup errors in tests
       }
       try {
         if (stream != null) {
           stream.close();
         }
-      } catch (Exception e) {
+      } catch (java.io.IOException e) {
         // ignore cleanup errors in tests
       }
     }

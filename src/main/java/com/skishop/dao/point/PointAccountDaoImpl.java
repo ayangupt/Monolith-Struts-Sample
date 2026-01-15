@@ -59,18 +59,18 @@ public class PointAccountDaoImpl extends AbstractDao implements PointAccountDao 
     PreparedStatement ps = null;
     try {
       con = getConnection();
-      String sql;
-      int metricAmount;
+      String updateSql;
+      int absoluteAmount;
       if (amount >= 0) {
-        sql = "UPDATE point_accounts SET balance = balance + ?, lifetime_earned = lifetime_earned + ? WHERE user_id = ?";
-        metricAmount = amount;
+        updateSql = "UPDATE point_accounts SET balance = balance + ?, lifetime_earned = lifetime_earned + ? WHERE user_id = ?";
+        absoluteAmount = amount;
       } else {
-        sql = "UPDATE point_accounts SET balance = balance + ?, lifetime_redeemed = lifetime_redeemed + ? WHERE user_id = ?";
-        metricAmount = Math.abs(amount);
+        updateSql = "UPDATE point_accounts SET balance = balance + ?, lifetime_redeemed = lifetime_redeemed + ? WHERE user_id = ?";
+        absoluteAmount = Math.abs(amount);
       }
-      ps = con.prepareStatement(sql);
+      ps = con.prepareStatement(updateSql);
       ps.setInt(1, amount);
-      ps.setInt(2, metricAmount);
+      ps.setInt(2, absoluteAmount);
       ps.setString(3, userId);
       ps.executeUpdate();
     } catch (SQLException e) {
