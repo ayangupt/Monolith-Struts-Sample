@@ -22,16 +22,18 @@
 
 **内容**
 
-- Maven 2 プロジェクト雛形作成（`source/target=1.5`）。
-- パッケージ構造/フォルダ構成作成（`src/main/java`, `src/main/webapp`）。
-- `web.xml` / `struts-config.xml` スケルトン、`context.xml`、`log4j.properties` 雛形。
-- `pom.xml` 依存追加（Struts 1.2.9, log4j, dbcp, dbutils, javax.mail）。
+- Ant 1.8 プロジェクト雛形作成（`source/target=1.5`、Maven 2 も可）。
+- `build.xml` / `build.properties` / `lib/`（依存JAR配置 or Ivy）用意。
+- パッケージ構造/フォルダ構成作成（`src/main/java`, `src/main/resources`, `src/main/webapp`）。
+- `web.xml` / `struts-config.xml` スケルトン、`context.xml`（Tomcat DataSource）、`log4j.properties` 雛形。
+- 依存JAR配置（Struts 1.2.9, log4j, dbcp, dbutils, javax.mail, servlet/jsp-api, junit/strutstestcase）。
 - `.editorconfig` / コーディング規約メモ。
 
 **Exit Criteria**
 
-- `mvn -B -DskipTests package` が成功し、空の WAR が生成される。
+- `ant war` / `ant test` が成功し、空の WAR が生成される（Maven 使用時は `mvn -B -DskipTests package`）。
 - Tomcat (6 or 8) で ActionServlet が起動し 404 以外のエラーなく起動ログが出る。
+- `lib/` 必要依存が揃い、コンパイル時に未解決クラスがない。
 
 ---
 
@@ -39,16 +41,17 @@
 
 **内容**
 
-- ドメイン/DTO 定義：User, Role, Product, Category, Price, Inventory, Cart, Order, OrderItem, Shipment, Return, PointAccount, PointTransaction, Coupon, Campaign, Address, PasswordResetToken, ShippingMethod, EmailQueue。
+- ドメイン/DTO 定義：User, Role, UserSession, Product, ProductImage, Category, Price, Inventory, Cart, Order, OrderItem, OrderShipping, Shipment, Return, Payment, PointAccount, PointTransaction, Coupon, CouponUsage, Campaign, Address, PasswordResetToken, ShippingMethod, SecurityLog, EmailQueue, OAuthAccount(任意)。
 - `AbstractDao`, `DaoException`, `DataSourceLocator` 実装。
-- DAO インタフェースと実装作成（UserDao, ProductDao, InventoryDao, CouponDao, CartDao, OrderDao, PointAccountDao, PointTransactionDao, UserAddressDao, PasswordResetTokenDao, ShippingMethodDao, EmailQueueDao）。
-- DDL スクリプト作成（全テーブル・インデックス・制約）。
+- DAO インタフェースと実装作成：UserDao, RoleDao, UserSessionDao, ProductDao, ProductImageDao, InventoryDao, CouponDao, CouponUsageDao, CartDao, OrderDao, OrderShippingDao, ShipmentDao, ReturnDao, PaymentDao, PointAccountDao, PointTransactionDao, UserAddressDao, PasswordResetTokenDao, ShippingMethodDao, SecurityLogDao, EmailQueueDao, OAuthAccountDao(任意)。
+- DDL スクリプト作成（全テーブル・インデックス・制約、外部キー・ユニーク制約、`coupon_usage`/`security_logs`/`payments` 含む）。
 - 初期データ投入 SQL（サンプル商品・ユーザ・住所・在庫）。
 
 **Exit Criteria**
 
-- H2/PG で DDL 実行成功、DAO CRUD テストが JUnit + H2 でグリーン。
-- 主要 DAO のメソッドが Null を返さず期待データを返す（findByEmail, findPaged, reserve など）。
+- H2/PG で DDL 実行成功、DAO CRUD テストが JUnit + H2/DBUnit でグリーン。
+- 主要 DAO のメソッドが期待データを返す（findByEmail, findPaged, reserve, findActiveCouponUsage, lockInventory, recordPayment など）。
+- DDL に必須インデックスが存在し、外部キー制約違反が検出される。
 
 ---
 
@@ -56,21 +59,25 @@
 
 **内容**
 
-- サービス実装：AuthService, UserService, ProductService, InventoryService, CouponService, CartService, PaymentService(擬似), OrderService, PointService, ShippingService, TaxService, MailService。
+- サービス実装：AuthService, UserService, ProductService, InventoryService, CouponService, CartService, PaymentService(擬似), OrderService, PointService, ShippingService, TaxService, MailService, SecurityLogService, SessionService。
 - `OrderFacade` 実装（placeOrder, cancelOrder, returnOrder）。
 - ビジネスルール：
   - クーポン検証（usage_limit, minimum_amount,期間,is_active）。
-  - ポイント付与/利用（1%・365日）
+  - ポイント付与/利用（1%・365日）。
   - 税計算10%、送料800円/1万円以上無料。
   - 在庫悲観ロック `SELECT ... FOR UPDATE`、不足時例外。
   - 決済オーソリ成功/失敗ハンドリング、キャンセル/返品時ポイント・クーポン調整。
+  - Idempotency（`order_number` 一意、二重請求防止、メール送信重複防止）。
+  - トランザクション境界定義（サービスメソッド単位、例外時ロールバック）。
 
 **Exit Criteria**
 
 - JUnit サービステスト（H2 + DBUnit）がグリーン：
-  - 成功: checkout (coupon+points) → order/point/coupon_usage/stock 更新。
+  - 成功: checkout (coupon+points) → order/point/coupon_usage/stock/payments 更新。
   - キャンセル: 在庫戻し・ポイント減算・クーポン使用数減算。
   - 返品: 返金レコード・ポイント調整。
+- 競合テスト: 同時チェックアウトで悲観ロックが有効、ダブルチャージなし。
+- ロールバックテスト: 途中失敗時 DB 一貫性維持。
 
 ---
 
@@ -87,6 +94,7 @@
 
 - StrutsTestCase で主要 Action のフォワード/バリデーションが期待通り（success/failure）。
 - `validation.xml` に基づき入力エラー表示が JSP で確認できる。
+- CSRF トークンを含むフォームでトークン検証が通る/通らないテストが存在。
 
 ---
 
@@ -103,6 +111,7 @@
 
 - 手動動作確認: Tomcat 上でページがレンダリングされ、タグ解決エラーなし。
 - カート追加～チェックアウトまで UI 経路が完走。
+- XSS 対策: `<bean:write filter="true"/>` デフォルト、エスケープ漏れがないことを目視確認。
 
 ---
 
@@ -119,7 +128,7 @@
 
 - 未ログインで保護リソースアクセス→`/login.do` リダイレクト。
 - CSRF 不正時 403 相当レスポンス。
-- 5回誤りでロック、ログ記録確認。
+- 5回誤りでロック、`security_logs` 記録確認、解除手順確認。
 
 ---
 
@@ -149,6 +158,7 @@
 
 - ローカル SMTP（MailHog 等）でメール送信確認。
 - 失敗時リトライ・`status/retry_count/last_error` 更新。
+- 重複送信防止（同一 `email_queue` レコードは一度のみ送信）。
 
 ---
 
@@ -166,6 +176,7 @@
 
 - `docker-compose up` でアプリ+DB 起動、基本フロー成功。
 - WAR サイズとログローテーションが期待通り。
+- Docker 内から `ant war` が成功する（ビルド再現性）。
 
 ---
 
@@ -180,8 +191,9 @@
 
 **Exit Criteria**
 
-- テストスイート緑、カバレッジ (Routes/Services/DAO) 80% 目標。
+- テストスイート緑、カバレッジ (Actions/Services/DAO) 80% 目標。
 - 回帰テストチェックリスト完了。
+- SQLインジェクション/入力検証の負ケーステストが存在。
 
 ---
 
@@ -203,7 +215,9 @@
 ## 補足 (クロスカット)
 
 - コーディング規約準拠（Java 1.5 構文、ジェネリクス任意、注釈なし）。
-- レビュー観点チェックリスト（SQLインジェクション、Nullチェック、ロギング、例外変換）。
+- レビュー観点チェックリスト（SQLインジェクション、Nullチェック、ロギング、例外変換、トランザクション境界、Idempotency）。
 - Lint/Checkstyle (Java 5 設定) 任意導入。
 - i18n: `messages.properties` / `messages_ja.properties`。
 - Runbook: スレッドダンプ取得、ログローテーション確認手順。
+- トランザクション方針: サービス層で開始/コミット、DAO層はトランザクション非関知。
+- Idempotency: `order_number` と `email_queue` の送信フラグ/ユニーク制約で重複防止。
