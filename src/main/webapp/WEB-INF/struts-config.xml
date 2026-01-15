@@ -7,12 +7,18 @@
     <forward name="home" path="/home.do"/>
   </global-forwards>
 
+  <!-- Tiles is intentionally not configured in Phase 0. -->
   <action-mappings>
     <action path="/home"
             type="org.apache.struts.actions.ForwardAction"
             parameter="/WEB-INF/jsp/home.jsp"
             validate="false"/>
   </action-mappings>
+
+  <controller
+      multipartClass="org.apache.struts.upload.CommonsMultipartRequestHandler"
+      maxFileSize="2M"
+      bufferSize="4096"/>
 
   <message-resources parameter="messages"/>
 </struts-config>
