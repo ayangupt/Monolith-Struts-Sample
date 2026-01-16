@@ -38,6 +38,8 @@ services:
       - "5432:5432"
     volumes:
       - db-data:/var/lib/postgresql/data
+      # 初回起動時にスキーマ＆データを投入
+      - ./src/main/resources/db:/docker-entrypoint-initdb.d:ro
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "skishop"]
       interval: 10s

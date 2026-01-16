@@ -19,17 +19,17 @@ specific language governing permissions and limitations
 under the License.
 -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
     <artifactId>maven-plugins</artifactId>
     <groupId>org.apache.maven.plugins</groupId>
-    <version>12</version>
+    <version>13</version>
   </parent>
 
   <artifactId>maven-resources-plugin</artifactId>
-  <version>2.3</version>
+  <version>2.4</version>
   <packaging>maven-plugin</packaging>
 
   <name>Maven Resources Plugin</name>
@@ -48,9 +48,9 @@ under the License.
   </prerequisites>
 
   <scm>
-    <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/tags/maven-resources-plugin-2.3</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/tags/maven-resources-plugin-2.3</developerConnection>
-    <url>http://svn.apache.org/viewvc/maven/plugins/tags/maven-resources-plugin-2.3</url>
+    <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/tags/maven-resources-plugin-2.4</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/tags/maven-resources-plugin-2.4</developerConnection>
+    <url>http://svn.apache.org/viewvc/maven/plugins/tags/maven-resources-plugin-2.4</url>
   </scm>
   <issueManagement>
     <system>JIRA</system>
@@ -71,13 +71,19 @@ under the License.
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-utils</artifactId>
-      <version>1.5.6</version>
+      <version>1.5.15</version>
     </dependency>
 
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
       <artifactId>maven-filtering</artifactId>
-      <version>1.0-beta-2</version>
+      <version>1.0-beta-3</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.codehaus.plexus</groupId>
+      <artifactId>plexus-interpolation</artifactId>
+      <version>1.12</version>
     </dependency>
 
     <dependency>
@@ -103,8 +109,8 @@ under the License.
               <pomIncludes>
                 <pomInclude>**/pom.xml</pomInclude>
               </pomIncludes>
-              <postBuildHookScript>verify.bsh</postBuildHookScript>
-              <localRepositoryPath>${basedir}/target/local-repo</localRepositoryPath>
+              <postBuildHookScript>verify</postBuildHookScript>
+              <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
               <goals>
                 <goal>clean</goal>
                 <goal>process-test-resources</goal>
@@ -128,6 +134,34 @@ under the License.
         </plugins>
       </build>
     </profile>
+    <profile>
+      <id>release</id>
+      <build>
+        <plugins>
+          <plugin>
+            <!-- Using this plugin configuration to produce a buildable project source distro,
+                 per the discussion on members@ASF regarding what constitutes a valid release.
+            -->
+            <artifactId>maven-assembly-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>make-project-src-distro</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>single</goal>
+                </goals>
+                <configuration>
+                  <descriptors>
+                   <descriptor>src/main/assembly/source-release.xml</descriptor>
+                  </descriptors>
+                  <tarLongFileMode>gnu</tarLongFileMode>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>     
   </profiles>
-  
+
 </project>
