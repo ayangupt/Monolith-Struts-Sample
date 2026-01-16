@@ -1,0 +1,101 @@
+# Operations & Release Guide
+
+This guide focuses on Tomcat 6/8 because the project ships Dockerfiles for those
+versions (`./Dockerfile`, `./Dockerfile.tomcat6`); for newer Tomcat releases, use
+the Tomcat 8 settings as a baseline.
+
+## Deployment (Tomcat 6)
+1. Build the WAR: `mvn -B package`.
+2. Apply database schema: `src/main/resources/db/schema.sql` (optional seed data: `data.sql`).
+3. Create a context descriptor (example: `$CATALINA_HOME/conf/Catalina/localhost/skishop-monolith.xml`).
+   ```xml
+   <Context>
+     <Resource name="jdbc/skishop" auth="Container" type="javax.sql.DataSource"
+               maxActive="20" maxIdle="5" maxWait="10000"
+               username="${db.username}" password="${db.password}"
+               driverClassName="org.postgresql.Driver"
+               url="${db.url}"/>
+   </Context>
+   ```
+4. Provide the `db.*` properties via `CATALINA_OPTS` system properties or by using literal values
+   in the context XML (Tomcat expands `${...}` from system properties).
+5. Copy `target/skishop-monolith.war` into `$CATALINA_HOME/webapps/` and start Tomcat.
+
+## Deployment (Tomcat 8)
+Use `maxTotal`/`maxWaitMillis` attributes instead of `maxActive`/`maxWait`.
+
+```xml
+<Context>
+  <Resource name="jdbc/skishop" auth="Container" type="javax.sql.DataSource"
+            maxTotal="20" maxIdle="5" maxWaitMillis="10000"
+            username="${db.username}" password="${db.password}"
+            driverClassName="org.postgresql.Driver"
+            url="${db.url}"/>
+</Context>
+```
+
+Tomcat 8 can also deploy the WAR as `ROOT.war` for the root context if desired.
+
+## Context & Environment Configuration
+The application tries JNDI (`java:comp/env/jdbc/skishop`) first, then falls back to
+`WEB-INF/classes/app.properties`.
+
+`app.properties` keys (defaults in `src/main/resources/app.properties`, used when falling back
+to `DataSourceFactory`):
+- `db.url`, `db.username`, `db.password`, `db.driver`
+- `db.pool.maxActive`, `db.pool.maxIdle`, `db.pool.maxWait` (Tomcat 6-style naming)
+- `app.timezone`
+- `smtp.host`, `smtp.port`, `smtp.username`, `smtp.password`, `mail.from`
+
+For JNDI pool settings, follow the Tomcat 6/8 context examples above.
+
+`app.properties` placeholder resolution uses `${TOKEN}` (system properties first, then
+environment variables). The same `${db.url}`/`${db.username}`/`${db.password}` placeholders can
+also be used in the Tomcat context XML via system properties.
+Default usage:
+- `DB_PASSWORD`: injects the database password into `db.password`.
+
+Docker entrypoint variables (from `docker/entrypoint.sh` in this repo):
+- `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASSWORD`
+- Tomcat 6 pool settings: `DB_POOL_MAX_ACTIVE`, `DB_POOL_MAX_IDLE`, `DB_POOL_MAX_WAIT`
+- Tomcat 8 pool settings: `DB_POOL_MAX_TOTAL`, `DB_POOL_MAX_WAIT_MILLIS`, `DB_POOL_MAX_IDLE`
+- `TOMCAT_MAJOR` (6 or 8)
+
+## Backup & Restore (PostgreSQL)
+Backup:
+```sh
+pg_dump -Fc -f skishop-YYYYMMDD.dump -h <host> -U <db_user> <db_name>
+```
+
+Restore (stop the app first):
+```sh
+pg_restore --clean --if-exists -h <host> -U <db_user> -d <db_name> skishop-YYYYMMDD.dump
+```
+
+Docker example:
+```sh
+docker compose exec db pg_dump -Fc -U skishop skishop > skishop-YYYYMMDD.dump
+docker compose exec -T db pg_restore --clean --if-exists -U skishop -d skishop < skishop-YYYYMMDD.dump
+```
+
+## WAR Versioning & Release Notes
+- Version is sourced from `pom.xml` (`<version>`), with `finalName` set to `skishop-monolith`.
+- For versioned artifacts, rename the WAR after build (e.g. `skishop-monolith-1.0.1.war`) or
+  adjust `finalName` during release packaging.
+- Keep the deployed file name consistent with the desired context path.
+
+Release checklist:
+1. Update `pom.xml` version.
+2. Update the release notes below.
+3. Run `mvn -B test` and `mvn -B package`.
+4. Publish the WAR and tag the release.
+
+### Release Notes
+Template (capture user-visible changes, data migrations, and ops impacts):
+- Summary of changes
+- Database schema/data changes (scripts, backfill steps)
+- Configuration changes (new/removed settings)
+- Validation performed (tests, smoke checks)
+
+#### v1.0.0 (TBD - set on release)
+- Initial release of the monolithic Struts application.
