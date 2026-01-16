@@ -20,6 +20,7 @@ public class RegisterAction extends Action {
 
   public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response)
       throws Exception {
+    System.out.println("[RegisterAction] method=" + request.getMethod());
     if (!"POST".equalsIgnoreCase(request.getMethod())) {
       return mapping.getInputForward();
     }
@@ -41,11 +42,13 @@ public class RegisterAction extends Action {
       userService.register(user);
       return mapping.findForward("success");
     } catch (NoSuchAlgorithmException e) {
+      e.printStackTrace();
       ActionMessages errors = new ActionMessages();
       errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("error.register.failed"));
       saveErrors(request, errors);
       return mapping.findForward("failure");
     } catch (UnsupportedEncodingException e) {
+      e.printStackTrace();
       ActionMessages errors = new ActionMessages();
       errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("error.register.failed"));
       saveErrors(request, errors);

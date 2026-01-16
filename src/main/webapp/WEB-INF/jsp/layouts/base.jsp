@@ -6,19 +6,16 @@
 <head>
   <meta charset="UTF-8">
   <title><tiles:getAsString name="title"/></title>
+  <link rel="stylesheet" href="<html:rewrite page='/assets/css/app.css'/>" />
 </head>
 <body>
-  <div id="header">
+  <div class="app-header">
     <tiles:insert attribute="header"/>
   </div>
-  <div id="messages">
+  <div class="site-container">
     <tiles:insert attribute="messages"/>
-  </div>
-  <div id="content">
     <tiles:insert attribute="body"/>
   </div>
-  <div id="footer">
-    <tiles:insert attribute="footer"/>
-  </div>
+  <tiles:insert attribute="footer"/>
 </body>
 </html>

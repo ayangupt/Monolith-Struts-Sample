@@ -23,7 +23,7 @@
   </global-exceptions>
 
   <global-forwards>
-    <forward name="home" path="/home.do"/>
+    <forward name="home" path=".home"/>
     <forward name="login" path="/login.do"/>
     <forward name="products" path="/products.do"/>
     <forward name="cart" path="/cart.do"/>

@@ -1,8 +1,9 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic" %>
-<h2>商品一覧</h2>
-<html:form action="/products.do" method="get">
+<h2 class="page-title">商品一覧</h2>
+<div class="card">
+<html:form action="/products.do" method="get" styleClass="form-inline">
   <table>
     <tr>
       <th>キーワード</th>
@@ -22,13 +23,16 @@
   </table>
   <html:token/>
   <html:submit value="検索"/>
+  </table>
 </html:form>
+</div>
 
 <logic:empty name="productList">
-  <p>商品が見つかりませんでした。</p>
+  <div class="card">商品が見つかりませんでした。</div>
 </logic:empty>
 <logic:notEmpty name="productList">
-  <table border="1">
+  <div class="card table-responsive">
+  <table>
     <tr>
       <th>商品名</th>
       <th>ブランド</th>
@@ -56,4 +60,5 @@
       </tr>
     </logic:iterate>
   </table>
+  </div>
 </logic:notEmpty>

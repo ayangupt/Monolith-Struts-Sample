@@ -5,20 +5,27 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.TagSupport;
+import org.apache.struts.Globals;
+import org.apache.struts.taglib.html.Constants;
+import org.apache.struts.util.TokenProcessor;
 
 public class TokenTag extends TagSupport {
     @Override
     public int doStartTag() throws JspException {
         HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
-        HttpSession session = request.getSession(false);
+        HttpSession session = request.getSession();
         if (session == null) {
             return SKIP_BODY;
         }
-        String token = (String) session.getAttribute(org.apache.struts.Globals.TRANSACTION_TOKEN_KEY);
+        String token = (String) session.getAttribute(Globals.TRANSACTION_TOKEN_KEY);
+        if (token == null) {
+            TokenProcessor.getInstance().saveToken(request);
+            token = (String) session.getAttribute(Globals.TRANSACTION_TOKEN_KEY);
+        }
         if (token == null) {
             return SKIP_BODY;
         }
-        String name = org.apache.struts.taglib.html.Constants.TOKEN_KEY;
+        String name = Constants.TOKEN_KEY;
         try {
             JspWriter out = pageContext.getOut();
             out.write("<input type=\"hidden\" name=\"");

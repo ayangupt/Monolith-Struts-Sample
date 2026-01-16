@@ -7,14 +7,19 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import org.apache.struts.Globals;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.TilesRequestProcessor;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.struts.taglib.html.Constants;
 import org.apache.struts.util.TokenProcessor;
 
 public class AuthRequestProcessor extends TilesRequestProcessor {
+  private static final Log log = LogFactory.getLog(AuthRequestProcessor.class);
   private static final String LOGIN_PATH = "/login.do";
   private static final String LOGIN_USER_KEY = "loginUser";
 
@@ -23,7 +28,12 @@ public class AuthRequestProcessor extends TilesRequestProcessor {
       return false;
     }
     if (!"POST".equalsIgnoreCase(request.getMethod())) {
-      TokenProcessor.getInstance().saveToken(request);
+      // Only initialize token when missing to avoid invalidating tokens across tabs/pages.
+      HttpSession session = request.getSession(false);
+      Object currentToken = session != null ? session.getAttribute(Globals.TRANSACTION_TOKEN_KEY) : null;
+      if (currentToken == null) {
+        TokenProcessor.getInstance().saveToken(request);
+      }
     }
     return true;
   }
@@ -51,6 +61,13 @@ public class AuthRequestProcessor extends TilesRequestProcessor {
     if (requiresTokenValidation(request)) {
       TokenProcessor processor = TokenProcessor.getInstance();
       if (!processor.isTokenValid(request)) {
+        if (log.isWarnEnabled()) {
+          HttpSession session = request.getSession(false);
+          String sessionId = session != null ? session.getId() : "null";
+          Object sessionToken = session != null ? session.getAttribute(Globals.TRANSACTION_TOKEN_KEY) : null;
+          String requestToken = request.getParameter(Constants.TOKEN_KEY);
+          log.warn("Invalid CSRF token: path=" + request.getRequestURI() + ", session=" + sessionId + ", sessionToken=" + sessionToken + ", requestToken=" + requestToken);
+        }
         response.sendError(HttpServletResponse.SC_FORBIDDEN);
         return null;
       }
