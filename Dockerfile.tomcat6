@@ -1,13 +1,39 @@
-# Multi-stage build targeting Tomcat 6.0.53 + JDK6 (Java 5 compatible)
+# Multi-stage build targeting Tomcat 6.0.53 + JDK 5.0u22
 # Stage 1: Build
-FROM azul/zulu-openjdk:6 as build
+# Debian Stretch retained for JDK 5 compatibility.
+FROM debian:stretch-slim as build
 
+ARG JAVA_HOME=/opt/jdk1.5.0_22
+ARG JDK_URL=https://archive.org/download/Java_5_update_22/jdk-1_5_0_22-linux-amd64.bin
+ARG JDK_SHA256=2788b0c787cfa8d314e427d59fabf0b64a1c535d0b15a5437f38c0ede7beae4c
+ARG JDK_LICENSE=accept
+# Maven 2.2.1 is the last release with Java 5 compatibility.
+# Override MAVEN_BASE_URL if your archive mirrors store Maven 2.x elsewhere.
+ARG MAVEN_BASE_URL=https://archive.apache.org/dist/maven/maven-2
 ARG MAVEN_VERSION=2.2.1
+ENV JAVA_HOME=${JAVA_HOME}
 ENV MAVEN_HOME=/opt/maven
-ENV PATH=${MAVEN_HOME}/bin:${PATH}
+ENV PATH=${JAVA_HOME}/bin:${MAVEN_HOME}/bin:${PATH}
 
 RUN set -eux; \
-  curl -fsSL https://archive.apache.org/dist/maven/maven-3/${MAVEN_VERSION}/binaries/apache-maven-${MAVEN_VERSION}-bin.tar.gz \
+  if [ "${JDK_LICENSE}" != "accept" ]; then \
+    echo "Set JDK_LICENSE=accept to acknowledge the JDK 5 license." >&2; \
+    exit 1; \
+  fi; \
+  apt-get update; \
+  apt-get install -y --no-install-recommends ca-certificates curl gzip libstdc++5 tar; \
+  rm -rf /var/lib/apt/lists/*; \
+  curl -fsSL -o /tmp/jdk.bin ${JDK_URL}; \
+  if [ -n "${JDK_SHA256}" ]; then \
+    echo "${JDK_SHA256}  /tmp/jdk.bin" | sha256sum -c -; \
+  fi; \
+  chmod +x /tmp/jdk.bin; \
+  cd /tmp; \
+  # JDK 5 installer prompts once for license acceptance.
+  printf 'yes\n' | /tmp/jdk.bin; \
+  mv /tmp/jdk1.5.0_22 ${JAVA_HOME}; \
+  rm /tmp/jdk.bin; \
+  curl -fsSL ${MAVEN_BASE_URL}/${MAVEN_VERSION}/binaries/apache-maven-${MAVEN_VERSION}-bin.tar.gz \
     | tar -xzC /opt; \
   ln -s /opt/apache-maven-${MAVEN_VERSION} ${MAVEN_HOME}
 
@@ -18,13 +44,21 @@ COPY src ./src
 RUN mvn -B -DskipTests package
 
 # Stage 2: Runtime
-FROM azul/zulu-openjdk:6-jre as runtime
+# Debian Stretch retained for JDK 5 compatibility.
+FROM debian:stretch-slim as runtime
 
+ARG JAVA_HOME=/opt/jdk1.5.0_22
+ENV JAVA_HOME=${JAVA_HOME}
 ENV CATALINA_HOME=/opt/tomcat
-ENV PATH=${CATALINA_HOME}/bin:${PATH}
+ENV PATH=${JAVA_HOME}/bin:${CATALINA_HOME}/bin:${PATH}
+
+COPY --from=build ${JAVA_HOME} ${JAVA_HOME}
 
 # Tomcat 6.0.53 (latest 6.x) from archive
 RUN set -eux; \
+  apt-get update; \
+  apt-get install -y --no-install-recommends ca-certificates curl gzip libstdc++5 tar; \
+  rm -rf /var/lib/apt/lists/*; \
   curl -fsSL https://archive.apache.org/dist/tomcat/tomcat-6/v6.0.53/bin/apache-tomcat-6.0.53.tar.gz \
     | tar -xzC /opt; \
   ln -s /opt/apache-tomcat-6.0.53 ${CATALINA_HOME}; \
