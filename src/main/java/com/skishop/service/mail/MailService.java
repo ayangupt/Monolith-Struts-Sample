@@ -4,6 +4,7 @@ import com.skishop.dao.mail.EmailQueueDao;
 import com.skishop.dao.mail.EmailQueueDaoImpl;
 import com.skishop.domain.mail.EmailQueue;
 import com.skishop.domain.order.Order;
+import com.skishop.common.config.AppConfig;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
@@ -25,7 +26,6 @@ public class MailService {
   private static final int MAX_RETRY = 3;
   private static final long RETRY_DELAY_MS = 60000L;
   private static final long QUEUE_INTERVAL_MS = 30000L;
-  private static final String APP_PROPERTIES = "app.properties";
   private static final String TEMPLATE_PASSWORD_RESET = "mail/password_reset.txt";
   private static final String TEMPLATE_ORDER_CONFIRMATION = "mail/order_confirmation.txt";
   private static final String UTF_8 = "UTF-8";
@@ -157,28 +157,13 @@ public class MailService {
   }
 
   private static MailConfig loadConfig() {
-    Properties props = new Properties();
-    InputStream input = MailService.class.getClassLoader().getResourceAsStream(APP_PROPERTIES);
-    if (input == null) {
-      throw new IllegalStateException("app.properties not found");
-    }
-    try {
-      props.load(input);
-    } catch (IOException e) {
-      throw new IllegalStateException(e);
-    } finally {
-      try {
-        input.close();
-      } catch (IOException e) {
-        // Ignore close failures.
-      }
-    }
+    AppConfig configSource = AppConfig.getInstance();
     MailConfig config = new MailConfig();
-    config.setSmtpHost(normalize(props.getProperty("smtp.host")));
-    config.setSmtpPort(normalize(props.getProperty("smtp.port")));
-    config.setSmtpUsername(normalize(props.getProperty("smtp.username")));
-    config.setSmtpPassword(normalize(props.getProperty("smtp.password")));
-    config.setMailFrom(normalize(props.getProperty("mail.from")));
+    config.setSmtpHost(normalize(configSource.getString("smtp.host")));
+    config.setSmtpPort(normalize(configSource.getString("smtp.port")));
+    config.setSmtpUsername(normalize(configSource.getString("smtp.username")));
+    config.setSmtpPassword(normalize(configSource.getString("smtp.password")));
+    config.setMailFrom(normalize(configSource.getString("mail.from")));
     if (config.getSmtpHost() == null) {
       throw new IllegalStateException("smtp.host is required");
     }

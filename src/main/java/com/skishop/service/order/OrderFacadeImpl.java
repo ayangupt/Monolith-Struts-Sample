@@ -1,7 +1,7 @@
 package com.skishop.service.order;
 
+import com.skishop.common.dao.DaoFactory;
 import com.skishop.dao.address.UserAddressDao;
-import com.skishop.dao.address.UserAddressDaoImpl;
 import com.skishop.domain.address.Address;
 import com.skishop.domain.cart.Cart;
 import com.skishop.domain.cart.CartItem;
@@ -30,18 +30,42 @@ import java.util.List;
 import java.util.UUID;
 
 public class OrderFacadeImpl implements OrderFacade {
-  private final CartService cartService = new CartService();
-  private final CouponService couponService = new CouponService();
-  private final InventoryService inventoryService = new InventoryService();
-  private final PaymentService paymentService = new PaymentService();
-  private final OrderService orderService = new OrderService();
-  private final PointService pointService = new PointService();
-  private final ShippingService shippingService = new ShippingService();
-  private final TaxService taxService = new TaxService();
-  private final ProductService productService = new ProductService();
-  private final UserAddressDao userAddressDao = new UserAddressDaoImpl();
-  private final MailService mailService = new MailService();
-  private final UserService userService = new UserService();
+  private final CartService cartService;
+  private final CouponService couponService;
+  private final InventoryService inventoryService;
+  private final PaymentService paymentService;
+  private final OrderService orderService;
+  private final PointService pointService;
+  private final ShippingService shippingService;
+  private final TaxService taxService;
+  private final ProductService productService;
+  private final UserAddressDao userAddressDao;
+  private final MailService mailService;
+  private final UserService userService;
+
+  public OrderFacadeImpl() {
+    this(new CartService(), new CouponService(), new InventoryService(), new PaymentService(), new OrderService(),
+        new PointService(), new ShippingService(), new TaxService(), new ProductService(), DaoFactory.getUserAddressDao(),
+        new MailService(), new UserService());
+  }
+
+  public OrderFacadeImpl(CartService cartService, CouponService couponService, InventoryService inventoryService,
+      PaymentService paymentService, OrderService orderService, PointService pointService, ShippingService shippingService,
+      TaxService taxService, ProductService productService, UserAddressDao userAddressDao, MailService mailService,
+      UserService userService) {
+    this.cartService = cartService;
+    this.couponService = couponService;
+    this.inventoryService = inventoryService;
+    this.paymentService = paymentService;
+    this.orderService = orderService;
+    this.pointService = pointService;
+    this.shippingService = shippingService;
+    this.taxService = taxService;
+    this.productService = productService;
+    this.userAddressDao = userAddressDao;
+    this.mailService = mailService;
+    this.userService = userService;
+  }
 
   public Order placeOrder(String cartId, String couponCode, int usePoints, PaymentInfo paymentInfo, String userId) {
     Cart cart = cartService.getCart(cartId);

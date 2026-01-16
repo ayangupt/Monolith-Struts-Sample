@@ -1,9 +1,9 @@
 package com.skishop.web.action;
 
+import com.skishop.common.service.ServiceLocator;
 import com.skishop.domain.order.Order;
 import com.skishop.domain.user.User;
 import com.skishop.service.order.OrderFacade;
-import com.skishop.service.order.OrderFacadeImpl;
 import com.skishop.web.form.CheckoutForm;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -16,7 +16,7 @@ import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 
 public class CheckoutAction extends Action {
-  private final OrderFacade orderFacade = new OrderFacadeImpl();
+  private final OrderFacade orderFacade = ServiceLocator.getOrderFacade();
 
   public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response)
       throws Exception {

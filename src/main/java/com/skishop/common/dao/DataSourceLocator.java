@@ -32,7 +32,7 @@ public class DataSourceLocator {
         Context ctx = new InitialContext();
         dataSource = (DataSource) ctx.lookup("java:comp/env/jdbc/skishop");
       } catch (NamingException e) {
-        throw new IllegalStateException("DataSource not configured", e);
+        dataSource = DataSourceFactory.createFromConfig();
       }
     }
     if (dataSource == null) {
