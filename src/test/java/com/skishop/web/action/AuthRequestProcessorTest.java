@@ -19,9 +19,30 @@ public class AuthRequestProcessorTest extends StrutsActionTestBase {
     addRequestParameter("billingZip", "12345");
     try {
       actionPerform();
-      fail("Expected CSRF validation to reject the request.");
     } catch (junit.framework.AssertionFailedError e) {
-      // Expected error response from CSRF validation.
+      // Some Struts test flows throw on sendError; status validation still applies.
+    }
+    HttpServletResponseSimulator response = (HttpServletResponseSimulator) getResponse();
+    assertEquals(HttpServletResponse.SC_FORBIDDEN, response.getStatusCode());
+  }
+
+  public void testRedirectsToLoginWhenUnauthenticated() throws Exception {
+    setRequestPathInfo("/orders");
+    setGetRequest();
+    actionPerform();
+    HttpServletResponseSimulator response = (HttpServletResponseSimulator) getResponse();
+    assertEquals(HttpServletResponse.SC_FOUND, response.getStatusCode());
+    assertEquals("/login.do", response.getHeader("Location"));
+  }
+
+  public void testUnauthorizedRoleReturnsForbidden() throws Exception {
+    setLoginUser("u-1", "USER");
+    setRequestPathInfo("/admin/products");
+    setGetRequest();
+    try {
+      actionPerform();
+    } catch (junit.framework.AssertionFailedError e) {
+      // Some Struts test flows throw on sendError; status validation still applies.
     }
     HttpServletResponseSimulator response = (HttpServletResponseSimulator) getResponse();
     assertEquals(HttpServletResponse.SC_FORBIDDEN, response.getStatusCode());
