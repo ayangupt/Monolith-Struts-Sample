@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("/points/balance")
+@RequestMapping("/points")
 public class PointBalanceController {
     private final PointService pointService;
 
@@ -18,7 +18,7 @@ public class PointBalanceController {
         this.pointService = pointService;
     }
 
-    @GetMapping
+    @GetMapping({"", "/", "/balance"})
     public String showPointBalance(HttpSession session, Model model) {
         User user = (User) session.getAttribute("loginUser");
         if (user == null) {
