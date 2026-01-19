@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>住所編集 - Ski Resort Shop</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+    <header class="app-header" th:insert="~{fragments/header :: header}"></header>
+    
+    <main class="site-container">
+        <h2 class="page-title">住所編集</h2>
+        
+        <form th:action="@{/addresses/save}" method="post" class="card">
+            <input type="hidden" name="id" th:value="${address?.id}"/>
+            
+            <table>
+                <tr>
+                    <th>ラベル</th>
+                    <td><input type="text" name="label" th:value="${address?.label}" size="20"/></td>
+                </tr>
+                <tr>
+                    <th>宛名</th>
+                    <td><input type="text" name="recipientName" th:value="${address?.recipientName}" size="30"/></td>
+                </tr>
+                <tr>
+                    <th>郵便番号</th>
+                    <td><input type="text" name="postalCode" th:value="${address?.postalCode}" size="10"/></td>
+                </tr>
+                <tr>
+                    <th>都道府県</th>
+                    <td><input type="text" name="prefecture" th:value="${address?.prefecture}" size="20"/></td>
+                </tr>
+                <tr>
+                    <th>住所1</th>
+                    <td><input type="text" name="address1" th:value="${address?.address1}" size="40"/></td>
+                </tr>
+                <tr>
+                    <th>住所2</th>
+                    <td><input type="text" name="address2" th:value="${address?.address2}" size="40"/></td>
+                </tr>
+                <tr>
+                    <th>電話番号</th>
+                    <td><input type="text" name="phone" th:value="${address?.phone}" size="20"/></td>
+                </tr>
+                <tr>
+                    <th>既定の住所</th>
+                    <td><input type="checkbox" name="isDefault" th:checked="${address?.default}"/></td>
+                </tr>
+            </table>
+            
+            <input type="submit" value="保存"/>
+        </form>
+    </main>
+    
+    <footer th:insert="~{fragments/footer :: footer}"></footer>
+</body>
+</html>
