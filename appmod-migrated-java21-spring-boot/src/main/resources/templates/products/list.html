@@ -59,7 +59,7 @@
                         <a th:href="@{/product(id=${product.id})}" th:text="${product.name}">Product Name</a>
                     </td>
                     <td th:text="${product.brand}">Brand</td>
-                    <td>¥<span th:text="${#numbers.formatInteger(product.effectivePrice, 0, 'COMMA')}">0</span></td>
+                    <td>$<span th:text="${#numbers.formatInteger(product.effectivePrice, 0, 'COMMA')}">0</span></td>
                     <td>
                         <form th:action="@{/cart}" method="post">
                             <input type="hidden" name="productId" th:value="${product.id}"/>

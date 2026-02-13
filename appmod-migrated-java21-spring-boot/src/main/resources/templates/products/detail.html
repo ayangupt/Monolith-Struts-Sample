@@ -17,7 +17,7 @@
             <p>Brand: <span th:text="${product.brand}">Brand</span></p>
             <p>SKU: <span th:text="${product.sku}">SKU</span></p>
             <p>Category: <span th:text="${product.categoryId}">Category</span></p>
-            <p>Price: <span class="price" th:text="${product.effectivePrice}">Price</span></p>
+            <p>Price: $<span class="price" th:text="${#numbers.formatInteger(product.effectivePrice, 0, 'COMMA')}">Price</span></p>
             <p>Description: <span th:text="${product.description}">Description</span></p>
             
             <form th:action="@{/cart}" method="post">
