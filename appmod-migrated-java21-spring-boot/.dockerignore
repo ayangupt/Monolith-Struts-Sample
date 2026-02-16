@@ -1,0 +1,44 @@
+# Git files
+.git
+.gitignore
+.gitattributes
+
+# IDE files
+.vscode
+.idea
+*.iml
+*.iws
+*.ipr
+.settings
+.classpath
+.project
+
+# Build output
+target/
+bin/
+out/
+build/
+
+# Logs
+logs/
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Documentation
+*.md
+!README.md
+
+# Azure files
+.azure/
+
+# Test files
+src/test/
+
+# Other
+.env
+*.swp
+*.swo
+*~

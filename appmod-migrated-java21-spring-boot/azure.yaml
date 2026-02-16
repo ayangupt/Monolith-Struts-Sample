@@ -1,0 +1,42 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/Azure/azure-dev/refs/heads/main/schemas/v1.0/azure.yaml.json
+
+name: skishop-monolith
+metadata:
+  template: skishop-monolith@1.0.0
+
+services:
+  skishop-app:
+    project: .
+    language: java
+    host: containerapp
+    docker:
+      path: ./Dockerfile
+      context: .
+      remoteBuild: true
+
+# hooks:
+#   postprovision:
+#     shell: sh
+#     run: |
+#       echo "Waiting for managed identity propagation..."
+#       sleep 30
+#       
+#       # Install Service Connector extension if not installed
+#       az extension add --name serviceconnector-passwordless --only-show-errors || true
+#       
+#       # Get the client ID of the user-assigned managed identity
+#       clientId=$(az identity show --name ${AZURE_IDENTITY_NAME} --resource-group ${AZURE_RESOURCE_GROUP} --query clientId -o tsv)
+#       subsId=${AZURE_SUBSCRIPTION_ID}
+#       
+#       echo "Creating connection with client ID: $clientId"
+#       
+#       # Create connection between Container App and PostgreSQL using managed identity
+#       az containerapp connection create postgres-flexible \
+#         --connection skishopdbconnection \
+#         --user-identity client-id=$clientId subs-id=$subsId \
+#         --source-id ${AZURE_CONTAINER_APP_ID} \
+#         --target-id ${AZURE_POSTGRESQL_ID} \
+#         --client-type springBoot \
+#         -c skishop-app \
+#         -y
+#     continueOnError: false
