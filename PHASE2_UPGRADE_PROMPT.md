@@ -37,6 +37,10 @@ code .
 
 ## Phase 2: Upgrade Prompt for Copilot
 
+### Option 1: Comprehensive Prompt (Recommended)
+
+This detailed prompt guides the tool through the entire upgrade workflow, including build fixing, testing, and validation.
+
 ### Copy-Paste Prompt #1: Generate Upgrade Plan
 
 Once you have the project open in VS Code, open GitHub Copilot Chat and paste the following prompt:
@@ -49,6 +53,7 @@ I need to upgrade this Spring Boot application from Java 8 to Java 21 and Spring
 Current state:
 - Java: 8
 - Spring Boot: 2.7.18
+- Build tool: Maven
 - Servlet API: javax.servlet
 - JPA: javax.persistence
 - Validation: javax.validation
@@ -60,15 +65,77 @@ Target state:
 - JPA: jakarta.persistence
 - Validation: jakarta.validation
 
-Please analyze the project and generate a comprehensive upgrade plan that includes:
-1. All dependency updates needed in pom.xml
-2. All javax.* to jakarta.* package migrations
-3. Spring Security configuration updates (if needed)
-4. Deprecated API replacements
-5. Any breaking changes between Spring Boot 2.x and 3.x
+Please perform a complete upgrade workflow:
 
-After generating the plan, create a new branch and apply all necessary changes.
+1. **Analysis & Planning:**
+   - Analyze the project structure and dependencies
+   - Generate a comprehensive upgrade plan
+   - Identify all files requiring changes
+
+2. **Code Migration:**
+   - Update pom.xml with Spring Boot 3.x and Java 21
+   - Migrate all javax.* imports to jakarta.*
+   - Update Spring Security configuration (WebSecurityConfigurerAdapter → SecurityFilterChain)
+   - Replace deprecated APIs and update for breaking changes
+
+3. **Build & Fix Iteration:**
+   - Build the project with the updated configuration
+   - Fix any compilation errors iteratively
+   - Ensure the project compiles successfully
+
+4. **Validation:**
+   - Check for introduced CVEs in upgraded dependencies
+   - Fix any security vulnerabilities found
+   - Run all unit tests and fix failures
+   - Verify test mocks work with new Spring Boot version
+
+5. **Quality Checks:**
+   - Validate code consistency (ensure behavior is preserved)
+   - Check migration completeness (no leftover javax.* references)
+   - Final build validation
+
+6. **Version Control:**
+   - Create a new branch for the upgrade (e.g., "java21-upgrade")
+   - Commit changes with descriptive messages
+   - Document all changes made
+
+Please proceed with the upgrade automatically, fixing any issues encountered during build and test phases. Only stop if critical blockers are found that require manual intervention.
 ```
+
+---
+
+### Option 2: Simplified Prompt (Quick Start)
+
+If you prefer a shorter prompt and let the tool handle details automatically:
+
+```
+@workspace #generate_upgrade_plan
+
+Upgrade this Spring Boot 2.7.18 + Java 8 application to Spring Boot 3.2.x + Java 21.
+
+Please:
+- Generate and execute the upgrade plan
+- Migrate javax.* to jakarta.*
+- Update Spring Security configuration
+- Fix build errors and test failures automatically
+- Run CVE checks
+- Create a new branch with all changes
+
+Proceed automatically through the entire upgrade workflow.
+```
+
+---
+
+### Which Prompt Should You Use?
+
+| Aspect | Comprehensive Prompt | Simplified Prompt |
+|--------|---------------------|-------------------|
+| **Detail Level** | Explicit workflow steps | High-level instructions |
+| **Control** | More guidance to the tool | Lets tool decide approach |
+| **Best For** | Complex projects, specific requirements | Standard upgrades, trust automation |
+| **Learning** | Helps understand the process | Faster to execute |
+
+**Recommendation:** Use the **Comprehensive Prompt** for this demo to see the full capabilities of the App Modernization tool, including build fixing, test fixing, CVE checking, and validation stages.
 
 ---
 
