@@ -1,0 +1,31 @@
+spring:
+  application:
+    name: skishop-app
+
+  # H2 in-memory database for testing
+  datasource:
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+
+  # JPA configuration for tests
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.H2Dialect
+
+  # Thymeleaf
+  thymeleaf:
+    cache: false
+
+# Logging - reduce noise during tests
+logging:
+  level:
+    com.skishop: DEBUG
+    org.springframework: WARN
+    org.hibernate: WARN

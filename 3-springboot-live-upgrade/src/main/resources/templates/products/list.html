@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="fragments/common :: head('Products - SkiShop')"/>
+</head>
+<body>
+    <th:block th:replace="fragments/common :: header"/>
+    
+    <main class="container">
+        <h2 class="page-title">Product List</h2>
+        
+        <div class="card">
+            <form th:action="@{/products}" method="get" class="search-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Keyword</label>
+                        <input type="text" name="keyword" th:value="${keyword}" placeholder="Search...">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Category</label>
+                        <select name="categoryId">
+                            <option value="">All Categories</option>
+                            <option th:each="cat : ${categoryOptions}" 
+                                    th:value="${cat.id}" 
+                                    th:text="${cat.name}"
+                                    th:selected="${cat.id == categoryId}">Category</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Sort</label>
+                        <select name="sort">
+                            <option value="">Not specified</option>
+                            <option value="priceAsc" th:selected="${sort == 'priceAsc'}">Price (Low to High)</option>
+                            <option value="priceDesc" th:selected="${sort == 'priceDesc'}">Price (High to Low)</option>
+                            <option value="newest" th:selected="${sort == 'newest'}">Newest</option>
+                        </select>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">Search</button>
+                </div>
+            </form>
+        </div>
+        
+        <div th:if="${#lists.isEmpty(productList)}" class="card">
+            <p>No products found.</p>
+        </div>
+        
+        <div th:unless="${#lists.isEmpty(productList)}" class="card">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Product Name</th>
+                        <th>Brand</th>
+                        <th>Price</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="product : ${productList}">
+                        <td>
+                            <a th:href="@{/product/{id}(id=${product.id})}" th:text="${product.name}">Product Name</a>
+                        </td>
+                        <td th:text="${product.brand}">Brand</td>
+                        <td th:text="${product.priceDisplay}">Price</td>
+                        <td>
+                            <form th:action="@{/cart/add}" method="post" class="inline-form">
+                                <input type="hidden" name="productId" th:value="${product.id}">
+                                <input type="number" name="quantity" value="1" min="1" max="99" class="quantity-input">
+                                <button type="submit" class="btn btn-small">Add to Cart</button>
+                            </form>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <!-- Pagination -->
+            <div th:if="${totalPages > 1}" class="pagination">
+                <a th:if="${currentPage > 0}" 
+                   th:href="@{/products(page=${currentPage - 1}, keyword=${keyword}, categoryId=${categoryId}, sort=${sort})}"
+                   class="btn btn-small">&laquo; Previous</a>
+                <span th:text="'Page ' + (${currentPage} + 1) + ' of ' + ${totalPages}"></span>
+                <a th:if="${currentPage < totalPages - 1}" 
+                   th:href="@{/products(page=${currentPage + 1}, keyword=${keyword}, categoryId=${categoryId}, sort=${sort})}"
+                   class="btn btn-small">Next &raquo;</a>
+            </div>
+        </div>
+    </main>
+    
+    <th:block th:replace="fragments/common :: footer"/>
+</body>
+</html>

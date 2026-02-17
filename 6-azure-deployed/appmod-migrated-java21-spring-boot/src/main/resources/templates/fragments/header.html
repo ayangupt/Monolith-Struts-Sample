@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+<div th:fragment="header">
+  <div class="inner">
+    <div class="logo"><a th:href="@{/home}">Ski Resort Shop</a></div>
+    <ul class="app-nav">
+      <li><a th:href="@{/home}">Home</a></li>
+      <li><a th:href="@{/products}">Products</a></li>
+      <li><a th:href="@{/coupons/available}">Coupons</a></li>
+      <th:block th:if="${session.loginUser != null}">
+        <li><a th:href="@{/orders}">Order History</a></li>
+        <li><a th:href="@{/points}">Points</a></li>
+        <li><a th:href="@{/addresses}">Address Book</a></li>
+        <th:block th:if="${session.loginUser.role == 'ADMIN'}">
+          <li><a th:href="@{/admin/products}">Admin: Products</a></li>
+          <li><a th:href="@{/admin/orders}">Admin: Orders</a></li>
+          <li><a th:href="@{/admin/coupons}">Admin: Coupons</a></li>
+          <li><a th:href="@{/admin/shipping}">Admin: Shipping</a></li>
+        </th:block>
+      </th:block>
+      <th:block th:if="${session.loginUser == null}">
+        <li><a th:href="@{/login}">Login</a></li>
+        <li><a th:href="@{/register}">Sign Up</a></li>
+      </th:block>
+    </ul>
+    <div class="actions">
+      <form th:action="@{/products}" method="get" class="header-search">
+        <input type="text" name="keyword" value="" placeholder="Search by product or brand" />
+        <button type="submit">🔍</button>
+      </form>
+      <a th:href="@{/cart}" class="btn">🛒 Cart</a>
+      <th:block th:if="${session.loginUser != null}">
+        <span class="user-name">Hello, <span th:text="${session.loginUser.username}"></span></span>
+        <a th:href="@{/logout}">Logout</a>
+      </th:block>
+      <th:block th:if="${session.loginUser == null}">
+        <a th:href="@{/login}">Login</a>
+        <a th:href="@{/register}" class="btn">Sign Up</a>
+      </th:block>
+    </div>
+  </div>
+</div>
+</body>
+</html>

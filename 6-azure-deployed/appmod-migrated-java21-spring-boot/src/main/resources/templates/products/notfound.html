@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Not Found - Ski Resort Shop</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+    <header class="app-header" th:insert="~{fragments/header :: header}"></header>
+    
+    <main class="site-container">
+        <h2 class="page-title">Product Not Found</h2>
+        
+        <div class="card">
+            <p>The specified product does not exist.</p>
+            <p><a th:href="@{/products}" class="btn">Back to Product List</a></p>
+        </div>
+    </main>
+    
+    <footer th:insert="~{fragments/footer :: footer}"></footer>
+</body>
+</html>

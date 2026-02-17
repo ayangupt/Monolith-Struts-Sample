@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <th:block th:replace="fragments/common :: head('SkiShop - Home')"/>
+</head>
+<body>
+    <th:block th:replace="fragments/common :: header"/>
+    
+    <main class="container">
+        <h1>Welcome to SkiShop</h1>
+        <p>Your one-stop shop for all skiing equipment and accessories.</p>
+        
+        <div class="featured-section">
+            <h2>Browse Our Products</h2>
+            <a th:href="@{/products}" class="btn btn-primary">View All Products</a>
+        </div>
+        
+        <div class="info-section">
+            <div class="info-card">
+                <h3>Quality Equipment</h3>
+                <p>We offer top-quality skiing gear from the best brands.</p>
+            </div>
+            <div class="info-card">
+                <h3>Fast Shipping</h3>
+                <p>Get your orders delivered quickly and safely.</p>
+            </div>
+            <div class="info-card">
+                <h3>Customer Support</h3>
+                <p>Our team is here to help you with any questions.</p>
+            </div>
+        </div>
+    </main>
+    
+    <th:block th:replace="fragments/common :: footer"/>
+</body>
+</html>

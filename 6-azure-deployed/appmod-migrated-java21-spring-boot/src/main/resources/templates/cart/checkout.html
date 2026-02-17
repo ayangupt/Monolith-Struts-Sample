@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - Ski Resort Shop</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+    <header class="app-header" th:insert="~{fragments/header :: header}"></header>
+    
+    <main class="site-container">
+        <h2 class="page-title">Checkout</h2>
+        
+        <form th:action="@{/checkout}" method="post" class="card" th:object="${checkoutRequest}">
+            <input type="hidden" th:field="*{cartId}"/>
+            
+            <table>
+                <tr>
+                    <th>Coupon Code</th>
+                    <td><input type="text" th:field="*{couponCode}" size="20"/></td>
+                </tr>
+                <tr>
+                    <th>Payment Method</th>
+                    <td>
+                        <select th:field="*{paymentMethod}">
+                            <option value="CARD">Credit Card</option>
+                            <option value="COD">Cash on Delivery</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Card Number</th>
+                    <td><input type="text" th:field="*{cardNumber}" size="20"/></td>
+                </tr>
+                <tr>
+                    <th>Expiration Month</th>
+                    <td><input type="text" th:field="*{cardExpMonth}" size="4"/></td>
+                </tr>
+                <tr>
+                    <th>Expiration Year</th>
+                    <td><input type="text" th:field="*{cardExpYear}" size="6"/></td>
+                </tr>
+                <tr>
+                    <th>CVV</th>
+                    <td><input type="password" th:field="*{cardCvv}" size="6"/></td>
+                </tr>
+                <tr>
+                    <th>Billing Zip Code</th>
+                    <td><input type="text" th:field="*{billingZip}" size="10"/></td>
+                </tr>
+                <tr>
+                    <th>Use Points</th>
+                    <td><input type="number" th:field="*{usePoints}" size="6" min="0" value="0"/></td>
+                </tr>
+            </table>
+
+            <div th:if="${#fields.hasErrors()}" class="validation-errors">
+                <ul>
+                    <li th:each="err : ${#fields.errors('*')}" th:text="${err}"></li>
+                </ul>
+            </div>
+
+            <div th:if="${error}" class="validation-errors">
+                <p th:text="${error}"></p>
+            </div>
+            
+            <input type="submit" value="Place Order"/>
+        </form>
+    </main>
+    
+    <footer th:insert="~{fragments/footer :: footer}"></footer>
+</body>
+</html>

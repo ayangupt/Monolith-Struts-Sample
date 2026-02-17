@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="head(title)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title}">SkiShop</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<header th:fragment="header">
+    <nav class="navbar">
+        <div class="nav-brand">
+            <a th:href="@{/}">SkiShop</a>
+        </div>
+        <ul class="nav-menu">
+            <li><a th:href="@{/products}">Products</a></li>
+            <li><a th:href="@{/coupons/available}">Coupons</a></li>
+            <li><a th:href="@{/cart}">Cart</a></li>
+        </ul>
+        <div class="nav-auth" sec:authorize="isAnonymous()">
+            <a th:href="@{/login}">Login</a>
+            <a th:href="@{/register}">Register</a>
+        </div>
+        <div class="nav-auth" sec:authorize="isAuthenticated()">
+            <a th:href="@{/orders}">My Orders</a>
+            <a th:href="@{/points}">Points</a>
+            <a th:href="@{/logout}">Logout</a>
+        </div>
+        <div class="nav-auth" sec:authorize="hasRole('ADMIN')">
+            <a th:href="@{/admin/products}">Admin</a>
+        </div>
+    </nav>
+</header>
+
+<footer th:fragment="footer">
+    <div class="footer">
+        <p>&copy; 2024 SkiShop. All rights reserved.</p>
+    </div>
+</footer>
+
+</body>
+</html>

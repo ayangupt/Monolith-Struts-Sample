@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Management - Ski Resort Shop</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+    <header class="app-header" th:insert="~{fragments/header :: header}"></header>
+    
+    <main class="site-container">
+        <h2 class="page-title">Order Management</h2>
+        
+        <div th:if="${orders == null or #lists.isEmpty(orders)}" class="card">
+            <p>No order data available.</p>
+        </div>
+        
+        <div th:if="${orders != null and not #lists.isEmpty(orders)}" class="card table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Order Number</th>
+                        <th>Status</th>
+                        <th>Payment Status</th>
+                        <th>Total</th>
+                        <th>Details</th>
+                        <th>Update</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="order : ${orders}">
+                        <td th:text="${order.orderNumber}">Order Number</td>
+                        <td th:text="${order.status}">Status</td>
+                        <td th:text="${order.paymentStatus}">Payment Status</td>
+                        <td th:text="${order.totalAmount}">Total</td>
+                        <td>
+                            <a th:href="@{/admin/orders/detail(orderId=${order.id})}">Details</a>
+                        </td>
+                        <td>
+                            <form th:action="@{/admin/order/update}" method="post" style="display:inline;">
+                                <input type="hidden" name="orderId" th:value="${order.id}"/>
+                                <input type="text" name="status" th:value="${order.status}" size="10"/>
+                                <input type="text" name="paymentStatus" th:value="${order.paymentStatus}" size="10"/>
+                                <input type="submit" value="Update"/>
+                            </form>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+    
+    <footer th:insert="~{fragments/footer :: footer}"></footer>
+</body>
+</html>

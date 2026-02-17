@@ -1,0 +1,59 @@
+spring:
+  application:
+    name: skishop-app
+
+  # Database configuration
+  datasource:
+    url: jdbc:postgresql://localhost:5432/skishop
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:password}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 5
+      connection-timeout: 30000
+
+  # JPA configuration
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  # Thymeleaf configuration
+  thymeleaf:
+    cache: false
+    prefix: classpath:/templates/
+    suffix: .html
+    mode: HTML
+
+  # Email configuration (optional)
+  mail:
+    host: ${MAIL_HOST:smtp.example.com}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
+
+# Server configuration
+server:
+  port: 8080
+  servlet:
+    session:
+      timeout: 30m
+
+# Logging configuration
+logging:
+  level:
+    com.skishop: DEBUG
+    org.springframework: INFO
+    org.hibernate.SQL: DEBUG
+
+# Actuator endpoints
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
