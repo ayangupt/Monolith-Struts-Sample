@@ -285,7 +285,18 @@ mvn clean test
 
 **Goal:** Upgrade Spring Boot 2.7 + Java 8 → Spring Boot 3.x + Java 21
 
-### Steps
+### 📋 Quick Start with Copy-Paste Prompts
+
+**→ See [PHASE2_UPGRADE_PROMPT.md](PHASE2_UPGRADE_PROMPT.md) for detailed, copy-paste ready instructions** to use with the GitHub Copilot App Modernization tool.
+
+The prompt instructions file includes:
+- ✅ Complete setup steps
+- ✅ Ready-to-use Copilot prompts
+- ✅ Expected changes and verification steps
+- ✅ Troubleshooting guide
+- ✅ Follow-up prompts for common scenarios
+
+### Quick Steps Summary
 
 1. **Clone the migration branch:**
    ```bash
@@ -300,16 +311,20 @@ mvn clean test
 
 3. **Use the App Modernization tool:**
    - Open GitHub Copilot Chat
-   - Type: `#generate_upgrade_plan`
-   - The tool will analyze the project and generate an upgrade plan
+   - Copy the prompt from [PHASE2_UPGRADE_PROMPT.md](PHASE2_UPGRADE_PROMPT.md)
+   - Paste into Copilot Chat and press Enter
+   - The tool will analyze, plan, and execute the upgrade
 
-4. **Review and confirm the upgrade plan**
-
-5. **The tool creates:**
-   - Updated `pom.xml` with Spring Boot 3.x and Java 21
-   - Migrated `javax.*` imports to `jakarta.*`
-   - Updated deprecated APIs
-   - New branch with all changes
+4. **What the tool does automatically:**
+   - ✅ Generates comprehensive upgrade plan
+   - ✅ Updates `pom.xml` with Spring Boot 3.x and Java 21
+   - ✅ Migrates `javax.*` imports to `jakarta.*`
+   - ✅ Updates Spring Security configuration
+   - ✅ Replaces deprecated APIs
+   - ✅ Fixes build errors (up to 10 attempts)
+   - ✅ Fixes test failures
+   - ✅ Creates new branch with all changes
+   - ✅ Commits changes automatically
 
 ---
 
