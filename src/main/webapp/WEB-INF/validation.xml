@@ -154,7 +154,7 @@
       <field property="name" depends="required">
         <arg0 key="label.productName"/>
       </field>
-      <!-- Maximum price is limited to the expected JPY range. -->
+      <!-- Maximum price is limited to the expected USD range. -->
       <field property="price" depends="required,doubleRange">
         <arg0 key="label.productPrice"/>
         <var>

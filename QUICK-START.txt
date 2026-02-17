@@ -1,0 +1,87 @@
+╔══════════════════════════════════════════════════════════════════════════════╗
+║          APP MODERNIZATION DEMO - QUICK START GUIDE                          ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+📍 LOCATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Linux:   /home/ayangupta/App-Modernization-Demo
+Windows: \\wsl.localhost\Ubuntu\home\ayangupta\App-Modernization-Demo
+
+
+🚀 LAUNCH DEMO (3 OPTIONS)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Option 1: Quick Launch All Folders
+    cd ~/App-Modernization-Demo
+    ./launch-demo.sh
+
+Option 2: Open Individual Folders
+    cd ~/App-Modernization-Demo
+    code 1-struts-original
+    code 2-struts-live-demo
+    code 3-springboot-live-upgrade
+    code 4-java21-upgraded
+
+Option 3: Multi-Root Workspace
+    cd ~/App-Modernization-Demo
+    code --add 1-struts-original --add 2-struts-live-demo \
+         --add 3-springboot-live-upgrade --add 4-java21-upgraded
+
+
+📋 FOLDER STRUCTURE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✅ 1-struts-original/          (main) - 224M
+   └─ Use for: Container Assist & Assessment (Part 2)
+
+✅ 2-struts-live-demo/          (main) - 224M
+   └─ Use for: Live Phase 1 Migration Demo (Part 3)
+
+✅ 3-springboot-live-upgrade/   (springboot27-migration) - 101M
+   └─ Use for: Live Phase 2 Upgrade Demo (Part 3)
+
+✅ 4-java21-upgraded/           (java21-upgraded) - 101M
+   └─ Use for: Final Results & Azure Deployment (Part 4-5)
+
+✅ 5-springboot27-base/         (springboot27-migration) - 101M
+   └─ Use for: Backup/Reference
+
+
+⏱️  DEMO TIMELINE (60 MIN)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+0-5 min    Slides (Introduction)
+5-15 min   Folder 1: Container Assist & Assessment
+15 min     Folder 2: START Phase 1 Migration ⏰
+17 min     Folder 3: START Phase 2 Upgrade ⏰
+17-35 min  Monitor both migrations (toggle between folders)
+35-45 min  Folder 4: Review results, run tests
+45-55 min  Folder 4: Deploy to Azure
+55-60 min  Wrap-up & Q&A
+
+
+🔧 PRE-DEMO VERIFICATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+cd ~/App-Modernization-Demo
+
+# Check branches
+for dir in */; do 
+    echo "Checking $dir: $(cd $dir && git branch --show-current)"
+done
+
+# Verify tools
+docker ps                # Should show Docker running
+az account show          # Should show Azure account
+
+# Pre-cache dependencies (saves time during demo)
+cd 3-springboot-live-upgrade/skishop-springboot27 && mvn dependency:go-offline
+cd ../../4-java21-upgraded/skishop-springboot27 && mvn dependency:go-offline
+cd ../..
+
+
+📖 DOCUMENTATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Main Repo:  https://github.com/ayangupt/Monolith-Struts-Sample
+README:     ~/App-Modernization-Demo/README.md
+Demo Flow:  https://github.com/ayangupt/Monolith-Struts-Sample/blob/main/DEMO_FLOW.md
+Phase 2:    https://github.com/ayangupt/Monolith-Struts-Sample/blob/main/PHASE2_UPGRADE_PROMPT.md
+
+
+✨ YOU'RE READY! Good luck with your demo! 🎉

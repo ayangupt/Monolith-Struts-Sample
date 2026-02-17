@@ -5,7 +5,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-      # Dockerfile内で ./binaries/jdk-1_5_0_22-linux-amd64.bin をCOPYしローカルJDKを優先利用
+      # In Dockerfile, COPY ./binaries/jdk-1_5_0_22-linux-amd64.bin and prioritize local JDK
       args:
         JDK_LICENSE: accept
         JDK_URL: https://archive.org/download/Java_5_update_22/jdk-1_5_0_22-linux-amd64.bin
@@ -38,7 +38,7 @@ services:
       - "5432:5432"
     volumes:
       - db-data:/var/lib/postgresql/data
-      # 初回起動時にスキーマ＆データを投入
+      # Schema and data initialization on first startup
       - ./src/main/resources/db:/docker-entrypoint-initdb.d:ro
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "skishop"]

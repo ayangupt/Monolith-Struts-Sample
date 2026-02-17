@@ -104,7 +104,7 @@ public class AdminProductEditAction extends Action {
     price.setProductId(productForm.getId());
     price.setRegularPrice(priceValue);
     price.setSalePrice(null);
-    price.setCurrencyCode("JPY");
+    price.setCurrencyCode("USD");
     price.setSaleStartDate(null);
     price.setSaleEndDate(null);
     priceDao.saveOrUpdate(price);

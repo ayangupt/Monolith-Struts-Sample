@@ -19,7 +19,7 @@ public class PaymentService {
     payment.setOrderId(orderId);
     payment.setCartId(cartId);
     payment.setAmount(amount);
-    payment.setCurrency("JPY");
+    payment.setCurrency("USD");
     payment.setStatus(status);
     payment.setPaymentIntentId("PAY-" + System.currentTimeMillis());
     payment.setCreatedAt(new Date());
