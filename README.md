@@ -69,6 +69,10 @@ The `#generate_upgrade_plan` tool is designed for **Java runtime version upgrade
 
 The migrated code is available on the **`springboot27-migration`** branch.
 
+**Why Phase 1?** The App Modernization tool (`#generate_upgrade_plan`) requires a modern framework base. Since Struts 1.x is EOL and incompatible with modern Java, Phase 1 uses GitHub Copilot to migrate to Spring Boot 2.7 + Java 8, creating a foundation that Phase 2 can then upgrade to Java 21 + Spring Boot 3.x.
+
+**After Phase 1:** Follow [PHASE2_UPGRADE_PROMPT.md](PHASE2_UPGRADE_PROMPT.md) to complete the modernization journey.
+
 ### What Phase 1 Creates
 
 | Component | Description |
@@ -278,6 +282,12 @@ mvn clean test
 # Tests run: 4, Failures: 0, Errors: 0
 # BUILD SUCCESS
 ```
+
+### ✅ Phase 1 Complete - Ready for App Modernization Tool
+
+Once Phase 1 is complete and verified, your application is ready for the App Modernization tool upgrade!
+
+**→ Next: See [PHASE2_UPGRADE_PROMPT.md](PHASE2_UPGRADE_PROMPT.md) for copy-paste ready instructions** to upgrade to Spring Boot 3.x + Java 21 using the GitHub Copilot App Modernization tool.
 
 ---
 
