@@ -61,7 +61,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean updatePassword(String userId, String oldPassword, String newPassword) {
         Optional<User> userOpt = userRepository.findById(userId);
-        if (!userOpt.isPresent()) {
+        if (userOpt.isEmpty()) {
             return false;
         }
 

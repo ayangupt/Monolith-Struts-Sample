@@ -27,30 +27,27 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .authorizeRequests()
-                .antMatchers("/", "/home", "/products/**", "/product/**", "/register", "/login", "/password/**").permitAll()
-                .antMatchers("/css/**", "/js/**", "/images/**", "/assets/**").permitAll()
-                .antMatchers("/cart/**").permitAll()
-                .antMatchers("/admin/**").hasRole("ADMIN")
-                .antMatchers("/orders/**", "/checkout/**", "/addresses/**", "/points/**").authenticated()
-                .anyRequest().authenticated()
-            .and()
-            .formLogin()
+            .authorizeHttpRequests(requests -> requests
+                .requestMatchers("/", "/home", "/products/**", "/product/**", "/register", "/login", "/password/**").permitAll()
+                .requestMatchers("/css/**", "/js/**", "/images/**", "/assets/**").permitAll()
+                .requestMatchers("/cart/**").permitAll()
+                .requestMatchers("/admin/**").hasRole("ADMIN")
+                .requestMatchers("/orders/**", "/checkout/**", "/addresses/**", "/points/**").authenticated()
+                .anyRequest().authenticated())
+            .formLogin(login -> login
                 .loginPage("/login")
                 .loginProcessingUrl("/login")
                 .defaultSuccessUrl("/", true)
                 .failureUrl("/login?error=true")
-                .permitAll()
-            .and()
-            .logout()
+                .permitAll())
+            .logout(logout -> logout
                 .logoutUrl("/logout")
                 .logoutSuccessUrl("/")
                 .invalidateHttpSession(true)
                 .deleteCookies("JSESSIONID")
-                .permitAll()
-            .and()
-            .csrf()
-                .ignoringAntMatchers("/api/**");
+                .permitAll())
+            .csrf(csrf -> csrf
+                .ignoringRequestMatchers("/api/**"));
 
         return http.build();
     }

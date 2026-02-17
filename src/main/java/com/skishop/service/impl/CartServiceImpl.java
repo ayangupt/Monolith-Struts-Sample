@@ -135,13 +135,13 @@ public class CartServiceImpl implements CartService {
         Optional<Cart> guestCart = cartRepository.findActiveCartBySessionId(sessionId);
         Optional<Cart> userCart = cartRepository.findActiveCartByUserId(userId);
 
-        if (!guestCart.isPresent()) {
+        if (guestCart.isEmpty()) {
             return userCart.orElse(null);
         }
 
         Cart guest = guestCart.get();
 
-        if (!userCart.isPresent()) {
+        if (userCart.isEmpty()) {
             guest.setUserId(userId);
             guest.setSessionId(null);
             return cartRepository.save(guest);

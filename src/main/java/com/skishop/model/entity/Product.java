@@ -77,7 +77,7 @@ public class Product {
             return "-";
         }
         try {
-            NumberFormat nf = NumberFormat.getCurrencyInstance(new Locale("ja", "JP"));
+            NumberFormat nf = NumberFormat.getCurrencyInstance(Locale.of("ja", "JP"));
             return nf.format(price);
         } catch (Exception e) {
             return price.toPlainString();
