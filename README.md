@@ -98,9 +98,54 @@ This Spring Boot 2.7.x project is ready for upgrade to:
 - **Spring Boot 3.x**
 - **Java 21 LTS**
 
-Use the GitHub Copilot Application Modernization tool:
+### Phase 2: Use the App Modernization Tool
+
+1. **Open this project as a separate workspace:**
+   ```bash
+   code /path/to/skishop-springboot27
+   ```
+
+2. **Run the upgrade plan tool:**
+   - Open GitHub Copilot Chat
+   - Type: `#generate_upgrade_plan`
+
+3. **The tool will:**
+   - Analyze the project's dependencies
+   - Generate an upgrade plan (saved to `.github/java-upgrade/`)
+   - Prompt you to confirm the plan
+   - Create a new branch with the upgraded code
+
+4. **Key changes in the upgrade:**
+   - `pom.xml`: Spring Boot 2.7.18 → 3.x, Java 8 → 21
+   - Imports: `javax.*` → `jakarta.*`
+   - Spring Security: Configuration API updates
+   - Deprecated API replacements
+
+### Manual Upgrade (Alternative)
+
+If you prefer to upgrade manually, update `pom.xml`:
+
+```xml
+<parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>3.2.2</version>  <!-- Changed from 2.7.18 -->
+</parent>
+
+<properties>
+    <java.version>21</java.version>  <!-- Changed from 8 -->
+</properties>
 ```
-#generate_upgrade_plan
+
+Then run:
+```bash
+# Fix javax → jakarta imports
+find src -name "*.java" -exec sed -i 's/javax\.persistence/jakarta.persistence/g' {} \;
+find src -name "*.java" -exec sed -i 's/javax\.validation/jakarta.validation/g' {} \;
+find src -name "*.java" -exec sed -i 's/javax\.servlet/jakarta.servlet/g' {} \;
+
+# Rebuild
+mvn clean compile
 ```
 
 ## License
