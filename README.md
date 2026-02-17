@@ -6,12 +6,12 @@ This folder contains **6 project states** ready for your demo tomorrow.
 
 | Folder | Branch | Technology Stack | Use In Demo |
 |--------|--------|------------------|-------------|
-| **1-struts-original** | `main` | Struts 1.x + Java 1.5 | Part 2: Container Assist & Assessment |
-| **2-struts-live-demo** | `main` | Struts 1.x + Java 1.5 | Part 3: Live Phase 1 Migration |
-| **3-springboot-live-upgrade** | `springboot27-migration` | Spring Boot 2.7 + Java 8 | Part 3: Live Phase 2 Upgrade |
-| **4-java21-upgraded** | `java21-upgraded` | Spring Boot 3.x + Java 21 | Part 4: Review Results |
+| **1-struts-original** | `main` | Struts 1.x + Java 1.5 | Container Assist & Assessment |
+| **2-struts-live-demo** | `main` | Struts 1.x + Java 1.5 | Phase 1 Migration using GHCP |
+| **3-springboot-live-upgrade** | `springboot27-migration` | Phase 2 App Mod Java Upgrade to 21 |
+| **4-java21-upgraded** | `java21-upgraded` | Spring Boot 3.x + Java 21 | Review Results + Run Migration Scenario |
 | **5-springboot27-base** | `springboot27-migration` | Spring Boot 2.7 + Java 8 | Backup/Reference |
-| **6-azure-deployed** | `azure-deployed-production` | Spring Boot 3.x + Java 21 + Azure | **Part 5-7: Container Assist & Azure Deploy** |
+| **6-azure-deployed** | `azure-deployed-production` | Spring Boot 3.x + Java 21 + Azure | Container Assist & Azure Deploy |
 
 ## 📍 Location
 
